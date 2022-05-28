@@ -1,30 +1,46 @@
 <script>
 
     import { fireEvent, EVENTS } from "./EventManager";
-    import { COMPONENT_TYPE_LIST , COMPONENT_COLUMN ,getComponentTypeClass } from "./constants";
+    import { PAYMENT_STATUS ,getEntryPaymentStatusClass , formatDateString , formatTimeString, ENTRY_DURATIONS } from "./constants";
     import Input from "./utility/Input.svelte";
     import Icon from "./utility/Icon.svelte";
-    export let component;
+    export let entry;
     export let actions = [];
 
     const sendOpenComponentDetailEvent = () => {
-        fireEvent(EVENTS.OPEN_EDIT_COMPONENT_POPUP,component.component_id);
+        fireEvent(EVENTS.OPEN_EDIT_ENTRY_POPUP,entry._id);
+    }
+
+    const sendChangeStatusEvent = (evt) => {
+        entry.payment_status =  evt.target.value;
+        fireEvent(EVENTS.UPDATE_ENTRY_STATUS,{
+            _id : entry._id,
+            payment_status : entry.payment_status
+        });
+    }
+
+    const sendChangeDurationEvent = (evt) => {
+        entry.duration =  evt.target.value;
+        fireEvent(EVENTS.UPDATE_ENTRY_DURATION,{
+            _id : entry._id,
+            duration : Number(entry.duration)
+        });
     }
 
     const sendDeleteComponentDetailEvent = () => {
-        fireEvent(EVENTS.DELETE_COMPONENET,component.component_id);
+        fireEvent(EVENTS.DELETE_ENTRY,entry._id);
     }
     
     const sendViewComponentDetailEvent = () => {
-        fireEvent(EVENTS.OPEN_VIEW_COMPONENT_POPUP,component.component_id);
+        fireEvent(EVENTS.OPEN_VIEW_ENTRY_POPUP,entry._id);
     }
 
 </script>
 
 <li class="columns flex justify-space-between align-center border-box">
 
-    <span class="column flex grow justify-center border-box text-bold pointer component_name justify-start align-center">
-        <Input label="Name"  width_class="width-full" type="text" classes="bg-transparent" value={component.component_name} data_field="component_name" readOnly/>
+    <span class="column flex grow justify-center border-box text-bold pointer entry_column justify-center align-center">
+        <Input label="Name"  width_class="width-full" type="text" classes="bg-transparent" value={formatDateString(entry.start_date)} data_field="start_date" readOnly/>
         <span class="row-actions">
             {#if actions.includes('EDIT')}
                 <Icon type="warning" OnClick={sendOpenComponentDetailEvent}>
@@ -51,21 +67,20 @@
                 </Icon>
                 &nbsp;&nbsp;
             {/if}
-            
         </span>
 
     </span>
-    <span class="column flex grow justify-center border-box text-bold pointer component_version  justify-center align-center">
-        <Input label="Version" width_class="width-full" type="text" classes="bg-transparent text-center" value={component.component_version} data_field="component_version" readOnly/>
+    <span class="column flex grow justify-center border-box text-bold pointer entry_column  justify-center align-center">
+        <Input label="Start Time" width_class="width-full" type="text" classes="bg-transparent text-center" value={formatTimeString(entry.start_time)} data_field="start_time" readOnly/>
     </span>
-    <span class="column flex grow justify-center border-box text-bold pointer component_date  justify-center align-center">
-        <Input label="Version" width_class="width-full" type="text" classes="bg-transparent text-center" value={component.component_date} data_field="component_version" readOnly/>
+    <span class="column column-select flex grow justify-center border-box text-bold pointer entry_column  justify-center align-center">
+        <Input label="Duration" width_class="width-full" type="select" classes="bg-transparent text-center border-radius-5 height-100" value={Number(entry.duration)} data_field="duration" options={ENTRY_DURATIONS} onChange={sendChangeDurationEvent}/>
     </span>
-    <span class="column flex grow justify-center border-box text-bold pointer component_parent_name  justify-center align-center">
-        <Input label="Parent Component (if any)" width_class="width-full" type="text" classes="bg-transparent text-center" value={component.component_parent_name} data_field="component_parent_name" readOnly/>
+    <span class="column column-select flex grow justify-center border-box text-bold pointer entry_column justify-center align-stretch">
+        <Input label="Payment Status" width_class="width-full" type="select" classes="bg-transparent text-center border-radius-5 {getEntryPaymentStatusClass(entry.payment_status)}" value={entry.payment_status} data_field="payment_status" options={PAYMENT_STATUS} onChange={sendChangeStatusEvent}/>
     </span>
-    <span class="column flex grow justify-center border-box text-bold pointer component_type justify-center align-stretch">
-        <Input label="Type" width_class="width-full" type="select" classes="bg-transparent text-center {getComponentTypeClass(component.component_type)}" value={component.component_type} data_field="component_type" options={COMPONENT_TYPE_LIST} readOnly/>
+    <span class="column flex grow justify-center border-box text-bold pointer entry_column  justify-center align-center">
+        <Input label="Amount" width_class="width-full" type="text" classes="bg-transparent text-center text-boldest" value="${entry.Amount}" data_field="Amount" readOnly/>
     </span>
          
 </li>
@@ -75,12 +90,14 @@
     .columns{
         width: 100%;
         list-style: none;
-        background-color: var(--secondary-color);
+        background-color: transparent;
         margin-bottom: 4px;
-        color: var(--text-secondary-color);
-        padding-left: 1rem;
-        box-shadow: 0 4px 24px 0 rgb(34 41 47 / 24%);
-        border-radius: 4px;
+        color: #3F4254;
+        border-bottom: 1px solid #EFF2F5;
+    }
+
+    .column-select{
+        padding: 5px 25px;
     }
 
     .column{
@@ -94,6 +111,10 @@
 
     li.columns:hover .row-actions{
         display: inherit;
+    }
+
+    .columns:last-of-type{
+        border-bottom: 0;
     }
 
 
