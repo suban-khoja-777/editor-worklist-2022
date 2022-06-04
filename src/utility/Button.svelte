@@ -3,11 +3,12 @@
     export let label;
     export let onClick;
     export let type;
+    export let variant;
 
 </script>
 
 
-<button class="pointer text-bold border-box" data-type={type} on:click={onClick}>{label}</button>
+<button class="pointer text-bold border-box" data-type={type} data-variant={variant} on:click={onClick}>{label}</button>
 
 <style>
     button{
@@ -21,42 +22,28 @@
         font-size: 1rem;
     }
 
-    button[data-type="primary"]{
-        background-color: #009EF7;
-        border : 1px solid #009EF7;
+    button[data-type="primary"][data-variant="brand"]{
+        background-color: var(--primary-color);
+        border : 1px solid var(--primary-color);
         color: white;
     }
 
-    button[data-type="secondary"]{
-        background-color: var(--btn-secondary-color);
-        border : 2px solid var(--btn-secondary-color);
+    button[data-type="primary"][data-variant="outline"]{
+        background-color: white;
+        border : 1px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    button[data-type="secondary"][data-variant="brand"]{
+        background-color: var(--secondary-color);
+        border : 1px solid var(--secondary-color);
         color: white;
     }
 
-    button[data-type="warning"]{
-        background-color: var(--warning-color);
-        border : 2px solid var(--warning-color);
-        color: white;
-    }
-
-    button[data-type="danger"]{
-        background-color: var(--danger-color);
-        border : 2px solid var(--danger-color);
-        color: white;
-    }
-
-    button[data-type="success"]{
-        background-color: var(--success-color);
-        border : 2px solid var(--success-color);
-        color: white;
-    }
-
-    button[data-type="link primary"]{
-        color: var(--btn-primary-color);
-        text-decoration: underline;
-        font-weight: 600;
-        padding: 0;
-        background-color: transparent;
+    button[data-type="secondary"][data-variant="outline"]{
+        background-color: white;
+        border : 1px solid var(--secondary-color);
+        color: var(--primary-color);
     }
     
 </style>
